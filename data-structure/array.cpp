@@ -53,7 +53,7 @@ public:
 
   void push_back(const T& value) {
     if (_size == _capacity) {
-      int new_capacity = (_capacity = 0 ? 1 : _capacity * 2);
+      int new_capacity = (_capacity == 0 ? 1 : _capacity * 2);
       resize(new_capacity);
     }
     data[_size++] = value;
