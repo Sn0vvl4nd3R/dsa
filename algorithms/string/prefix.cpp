@@ -1,9 +1,9 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <string>
 
-using namespace std;
-
-vector<int> Prefix(const string& s) {
-  vector<int> pi(s.size(), 0);
+std::vector<int> Prefix(const std::string& s) {
+  std::vector<int> pi(s.size(), 0);
   for (int i = 0; i < (int)pi.size(); i++) {
     for (int j = 0; j < i; j++) {
       if (s.substr(0, j + 1) == s.substr(i - j, j + 1)) {
@@ -15,13 +15,13 @@ vector<int> Prefix(const string& s) {
 }
 
 int main(void) {
-  string s;
-  cout << "Enter your string:\n";
-  cin >> s;
+  std::string s;
+  std::cout << "Enter your string:\n";
+  std::cin >> s;
 
-  vector<int> pref = Prefix(s);
+  std::vector<int> pref = Prefix(s);
   for (int& x : pref) {
-    cout << x << ' ';
+    std::cout << x << ' ';
   }
 
   return 0;
