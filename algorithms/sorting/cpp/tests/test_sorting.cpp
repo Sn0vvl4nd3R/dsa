@@ -9,54 +9,45 @@
 #include <vector>
 
 #include "../include/sort_algo/insertion_sort.hpp"
+#include "../include/sort_algo/bubble_sort.hpp"
 
 using namespace SortAlgo;
 
-static void CheckSortedEqual(const std::vector<int>& a, const std::vector<int>& b) {
+template <class Vec>
+void CheckSortedEqual(const Vec& a, const Vec& b) {
   assert(a.size() == b.size());
-  for (size_t i = 0; i < a.size(); ++i) {
+  for (std::size_t i = 0; i < a.size(); ++i) {
     assert(a[i] == b[i]);
   }
 }
 
+template <class It, class Compare = std::less<>>
+void RunAll(It first, It last, Compare comp = Compare{}) {
+  using v = typename std::iterator_traits<It>::value_type;
+  std::vector<v> base(first, last);
+  std::vector<v> ref = base;
+  std::stable_sort(ref.begin(), ref.end(), comp);
+
+  auto TestOne = [&](auto&& sort_fn) {
+    auto a = base;
+    sort_fn(a.begin(), a.end(), comp);
+    CheckSortedEqual(a, ref);
+  };
+
+  TestOne([](auto b, auto e, auto c) {
+    InsertionSort(b, e, c);
+  });
+  TestOne([](auto b, auto e, auto c) {
+    BubbleSort(b, e, c);
+  });
+}
+
 static void TestEdgeCases(void) {
-  {
-    std::vector<int> a;
-    auto ref = a;
-    std::stable_sort(ref.begin(), ref.end());
-    InsertionSort(a.begin(), a.end());
-    CheckSortedEqual(a, ref);
-  }
-
-  {
-    std::vector<int> a{42};
-    auto ref = a;
-    std::stable_sort(ref.begin(), ref.end());
-    InsertionSort(a.begin(), a.end());
-    CheckSortedEqual(a, ref);
-  }
-
-  {
-    std::vector<int> a{1,2,3,4,5,6,7,8,9};
-    auto ref = a;
-    InsertionSort(a.begin(), a.end());
-    CheckSortedEqual(a, ref);
-  }
-
-  {
-    std::vector<int> a{9,8,7,6,5,4,3,2,1,0};
-    auto ref = a; std::stable_sort(ref.begin(), ref.end());
-    InsertionSort(a.begin(), a.end());
-    CheckSortedEqual(a, ref);
-  }
-
-  {
-    std::vector<int> a{5,1,5,5,2,2,5,1,0,0,5};
-    auto ref = a;
-    std::stable_sort(ref.begin(), ref.end());
-    InsertionSort(a.begin(), a.end());
-    CheckSortedEqual(a, ref);
-  }
+  RunAll(std::vector<int>{}.begin(), {});
+  RunAll(std::vector<int>{42}.begin(), std::vector<int>{42}.end());
+  RunAll(std::vector<int>{1,2,3,4,5}.begin(), std::vector<int>{1,2,3,4,5}.end());
+  RunAll(std::vector<int>{5,4,3,2,1}.begin(), std::vector<int>{5,4,3,2,1}.end());
+  RunAll(std::vector<int>{1,1,1,1,1}.begin(), std::vector<int>{1,1,1,1,1}.end());
 }
 
 static void TestRandomInts(unsigned seed, int n, int repeats) {
@@ -67,21 +58,13 @@ static void TestRandomInts(unsigned seed, int n, int repeats) {
     for (int i = 0; i < n; ++i) {
       a[i] = dist(rng);
     }
-    auto ref = a; std::stable_sort(ref.begin(), ref.end());
-
-    auto b = a;
-    InsertionSort(b.begin(), b.end());
-    CheckSortedEqual(b, ref);
+    RunAll(a.begin(), a.end());
   }
 }
 
 static void TestStrings() {
   std::vector<std::string> a{"bb", "a", "aaa", "b", "ab", "aa"};
-  auto ref = a;
-  std::stable_sort(ref.begin(), ref.end());
-  auto b = a;
-  InsertionSort(b.begin(), b.end());
-  assert(b == ref);
+  RunAll(a.begin(), a.end());
 }
 
 int main(void) {
