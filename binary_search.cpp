@@ -22,15 +22,13 @@ int BinarySearch(std::vector<int>& arr, int target) {
 }
 
 int main(void) {
-  std::vector<int> arr;
   int n = 0;
-
   std::cin >> n;
+
+  std::vector<int> arr(n);
   
-  while (n--) {
-    int i = 0;
-    std::cin >> i;
-    arr.push_back(i);
+  for (int i = 0; i < n; i++) {
+    std::cin >> arr[i];
   }
 
   int target = 0;
